@@ -1,10 +1,65 @@
 import string
 #structural pattern matching / match case
 
-def run(program): #What is good ordering of the code/functions here? below as that is logical, or above as its easy to read
+def eval_program(program, i):
+    if len(program) == 0: return printlist
+    line = program[i]
+    line = line.split(" ")
+    match line[0]:
+        case "PRINT":
+            printlist.append(vars[line[1]]) #here using another method is way more complex than fixing it here
+        case "MOV":
+            MOV(line[1], line[2])
+        case "ADD":
+            ADD(line[1], line[2])
+        case "SUB":
+            SUB(line[1], line[2])
+        case "MUL":
+            MUL(line[1], line[2])
+        case "JUMP":
+            pass
+        case "IF":
+            pass
+        case "END":
+            return printlist
+        case _: #catch all for the locations
+            location[line[0][:-1]] = i # also here doesnt seem logical to use another function?
+    i += 1
+    if i >= len(program): return printlist
+    eval_program(program, i)
     
+def MOV(a,b):
+    if b in vars:
+        vars[a] = vars[b]
+    else:
+        vars[a] = int(b)
+
+def ADD(a,b):
+    if b in vars:
+        vars[a] += vars[b]
+    else:
+        vars[a] += int(b)
+
+def SUB(a,b):
+    if b in vars:
+        vars[a] -= vars[b]
+    else:
+        vars[a] -= int(b)
+
+def MUL(a,b):
+    if b in vars:
+        vars[a] *= vars[b]
+    else:
+        vars[a] *= int(b)
+
+def run(program): #What is good ordering of the code/functions here? below as that is logical, or above as its easy to read
+    #I feel like these need to be accessed and changed globally, but is that good practice?
+    #Feels like something is wrong with that, but also seems weird to pass them all through all functions
+    global printlist
     printlist = []
+    global location
     location = {} #save location name and index
+    global vars
     vars = {char : 0 for char in string.ascii_uppercase} #initialise vars
     i = 0
     eval_program(program, i)
@@ -27,7 +82,7 @@ if __name__ == "__main__":
     print(result)
 
 
-
+    """
     while True:
         line = program[i]
         line = line.split(" ")
@@ -64,3 +119,4 @@ if __name__ == "__main__":
         i += 1
     print(location)
     return printlist
+    """
