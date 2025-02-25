@@ -2,7 +2,7 @@ import string
 #structural pattern matching / match case
 
 def eval_program(program, i):
-    if len(program) == 0: return printlist
+    if len(program) == 0: return #printlist #gotta avoid errors if its empty
     line = program[i]
     line = line.split(" ")
     match line[0]:
@@ -17,15 +17,17 @@ def eval_program(program, i):
         case "MUL":
             MUL(line[1], line[2])
         case "JUMP":
-            pass
+            eval_program(program,location[line[1]]) #doubt if should be function but needs pogram
         case "IF":
-            pass
+            if IF(line[1], line[2], line[3]):
+                eval_program(program,location[line[5]])
         case "END":
-            return printlist
+            return #printlist
         case _: #catch all for the locations
             location[line[0][:-1]] = i # also here doesnt seem logical to use another function?
+    
     i += 1
-    if i >= len(program): return printlist
+    if i >= len(program): return #printlist #avoid errors if there is no end statement
     eval_program(program, i)
     
 def MOV(a,b):
@@ -52,6 +54,26 @@ def MUL(a,b):
     else:
         vars[a] *= int(b)
 
+def IF(val1, op, val2): #feels like this might be doable directly with like int(val1)opint(val2) but couldnt do it
+    if val1 in vars:
+        val1 = vars[val1]
+    if val2 in vars:
+        val2 = vars[val2]
+    
+    match op:
+        case "==":
+            return int(val1) == int(val2)
+        case ">=":
+            return int(val1) >= int(val2)
+        case "<=":
+            return int(val1) <= int(val2)
+        case "<":
+            return int(val1) < int(val2)
+        case ">":
+            return int(val1) > int(val2)
+        case "!=":
+            return int(val1) != int(val2)
+
 def run(program): #What is good ordering of the code/functions here? below as that is logical, or above as its easy to read
     #I feel like these need to be accessed and changed globally, but is that good practice?
     #Feels like something is wrong with that, but also seems weird to pass them all through all functions
@@ -67,20 +89,19 @@ def run(program): #What is good ordering of the code/functions here? below as th
 
 if __name__ == "__main__":
     program1 = []
-    program1.append("MOV A 10")
-    program1.append("PRINT A")
-    program1.append("MOV B A")
-    program1.append("PRINT A")
-    program1.append("potat:")
-    program1.append("PRINT B")
-    program1.append("MUL A B")
+    program1.append("MOV A 1")
+    program1.append("MOV B 1")
+    program1.append("start:")
+    program1.append("MUL A 2")
+    program1.append("ADD B 1")
+    program1.append("IF B != 101 JUMP start")
+    #program1.append("MUL A B")
     #program1.append("JUMP potat")
     program1.append("PRINT A")
     program1.append("END")
     
     result = run(program1)
     print(result)
-
 
     """
     while True:
